@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="./favicon.ico">
+<title>SCEL License Manager</title>
+<style>
+:root {
+  --bg: #0e1218;
+  --bg-card: #181d26;
+  --bg-input: #0a0d12;
+  --bg-input-focus: #0d1118;
+  --border: #2a3240;
+  --border-focus: #4dd0e1;
+  --text: #e6e9ef;
+  --text-dim: #8a93a3;
+  --text-faint: #5a6373;
+  --accent: #4dd0e1;
+  --accent-hover: #80deea;
+  --accent-dark: #2a8a99;
+  --success: #66bb6a;
+  --success-bg: rgba(102, 187, 106, 0.1);
+  --warning: #ffa726;
+  --warning-bg: rgba(255, 167, 38, 0.1);
+  --error: #ef5350;
+  --error-bg: rgba(239, 83, 80, 0.1);
+  --mono: ui-monospace, 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+header {
+  border-bottom: 1px solid var(--border);
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-card);
+}
+
+header h1 {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+header h1 span {
+  color: var(--accent);
+}
+
+header .version {
+  color: var(--text-faint);
+  font-size: 12px;
+  font-family: var(--mono);
+}
+
+nav {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+  padding: 0 32px;
+}
+
+nav button {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  padding: 14px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  font-family: inherit;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+nav button:hover {
+  color: var(--text);
+}
+
+nav button.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+main {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.section { display: none; }
+.section.active { display: block; }
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.card h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card .desc {
+  color: var(--text-dim);
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.field label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.field label .optional {
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-faint);
+  font-weight: 400;
+  margin-left: 6px;
+}
+
+.field input, .field textarea, .field select {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.field input.mono, .field textarea.mono {
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+.field input:focus, .field textarea:focus, .field select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  background: var(--bg-input-focus);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.field-with-button {
+  display: flex;
+  gap: 8px;
+}
+
+.field-with-button input { flex: 1; }
+
+button.primary {
+  background: var(--accent);
+  color: #0a1014;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+button.primary:hover { background: var(--accent-hover); }
+button.primary:disabled {
+  background: var(--text-faint);
+  cursor: not-allowed;
+}
+
+button.secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+button.secondary:hover {
+  border-color: var(--accent);
+  background: rgba(77, 208, 225, 0.05);
+}
+
+button.small {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+button.danger {
+  background: transparent;
+  color: var(--error);
+  border: 1px solid var(--error);
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+button.danger:hover {
+  background: var(--error-bg);
+}
+
+.button-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.alert {
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  border-left: 3px solid;
+}
+
+.alert.warning {
+  background: var(--warning-bg);
+  border-color: var(--warning);
+  color: #ffd180;
+}
+
+.alert.success {
+  background: var(--success-bg);
+  border-color: var(--success);
+  color: #a5d6a7;
+}
+
+.alert.error {
+  background: var(--error-bg);
+  border-color: var(--error);
+  color: #ffab91;
+}
+
+.alert.info {
+  background: rgba(77, 208, 225, 0.06);
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.alert strong { font-weight: 600; }
+
+.key-display {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  word-break: break-all;
+  color: var(--text);
+  margin-bottom: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.key-display.hidden {
+  filter: blur(8px);
+  user-select: none;
+}
+
+.output-block {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+
+.output-block .key { color: var(--accent); }
+.output-block .string { color: #c5e1a5; }
+.output-block .number { color: #ffcc80; }
+
+.status-list {
+  list-style: none;
+  margin: 16px 0;
+}
+
+.status-list li {
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-input);
+}
+
+.status-list li .icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.status-list li.pass .icon { background: var(--success); color: #0a1014; }
+.status-list li.fail .icon { background: var(--error); color: #fff; }
+.status-list li.pending .icon { background: var(--text-faint); color: #fff; }
+
+.status-list li.pass { color: #c5e1a5; }
+.status-list li.fail { color: #ffab91; }
+
+.folder-list {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.folder-list .folder {
+  padding: 4px 0;
+  color: var(--accent);
+}
+
+.section-title {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+details.collapse {
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-input);
+}
+
+details.collapse summary {
+  padding: 12px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-dim);
+  user-select: none;
+}
+
+details.collapse summary:hover { color: var(--text); }
+
+details.collapse[open] summary {
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+details.collapse .collapse-body {
+  padding: 16px 14px;
+}
+
+.tag {
+  display: inline-block;
+  background: var(--accent-dark);
+  color: var(--accent-hover);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  font-family: var(--mono);
+}
+
+.no-key-warning {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-dim);
+}
+
+.help-section h3 {
+  color: var(--accent);
+  font-size: 14px;
+  margin-bottom: 8px;
+  margin-top: 16px;
+}
+
+.help-section p {
+  color: var(--text-dim);
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.help-section code {
+  background: var(--bg-input);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent);
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-faint);
+  font-size: 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
+
+@media (max-width: 700px) {
+  main { padding: 16px; }
+  header, nav { padding-left: 16px; padding-right: 16px; }
+  .field-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span>SCEL</span> License Manager</h1>
+  <span class="version">v1.4 · Ed25519</span>
+</header>
+
+<nav>
+  <button class="active" data-tab="keys">Keys</button>
+  <button data-tab="issue">Issue License</button>
+  <button data-tab="verify">Verify License</button>
+  <button data-tab="help">Help</button>
+</nav>
+
+<main>
+
+<!-- ============================ KEYS TAB ============================ -->
+<section id="tab-keys" class="section active">
+
+  <div class="card">
+    <h2>Signing Key</h2>
+    <p class="desc">Your Ed25519 key pair. The private key signs Release Files; the public key allows anyone to verify them. Generate once, then back up the private key offline.</p>
+
+    <div id="no-key" class="no-key-warning">
+      <p>No key loaded.</p>
+      <div class="button-row" style="justify-content: center;">
+        <button class="primary" onclick="generateKeys()">Generate New Key Pair</button>
+        <button class="secondary" onclick="document.getElementById('import-section').open = true">Import Existing</button>
+      </div>
+    </div>
+
+    <div id="key-loaded" style="display: none;">
+      <div class="alert warning">
+        <strong>Security reminder:</strong> Your private key is held only in this browser tab's memory. It is never sent anywhere. If you reload the page, you lose it unless you have exported a backup.
+      </div>
+
+      <div class="field">
+        <label>Key Fingerprint <span class="tag">COMPARE THIS</span></label>
+        <div class="key-display" id="fp-display" style="color: var(--accent); font-weight: 600; letter-spacing: 1px; font-size: 14px;"></div>
+        <div class="button-row">
+          <button class="secondary small" onclick="copyText(state.publicKeyFingerprint || '')">Copy raw</button>
+          <button class="secondary small" onclick="copyText('sha256:' + (state.publicKeyFingerprint || ''))">Copy with prefix</button>
+        </div>
+        <p style="color: var(--text-faint); font-size: 12px; margin-top: 8px;">SHA-256 of the public key (first 16 hex chars). Short, comparable by eye. Cryptographically equivalent to comparing full keys.</p>
+      </div>
+
+      <div class="field">
+        <label>Public Key <span class="tag">PUBLISH THIS</span></label>
+        <div class="key-display" id="pub-display"></div>
+        <div class="button-row">
+          <button class="secondary small" onclick="copyText(document.getElementById('pub-display').textContent)">Copy</button>
+          <button class="secondary small" onclick="downloadText(document.getElementById('pub-display').textContent, 'suitefish_scel.pub')">Download .pub</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Private Key <span class="tag" style="background:#c62828;color:#ffcdd2;">KEEP SECRET</span></label>
+        <div class="key-display hidden" id="priv-display"></div>
+        <div class="button-row">
+          <button class="secondary small" onclick="toggleReveal()">Reveal / Hide</button>
+          <button class="secondary small" onclick="copyText(document.getElementById('priv-display').textContent)">Copy</button>
+          <button class="secondary small" onclick="downloadText(document.getElementById('priv-display').textContent, 'suitefish_scel.key')">Download .key</button>
+        </div>
+      </div>
+
+      <div class="button-row" style="margin-top: 24px;">
+        <button class="danger" onclick="clearKeys()">Clear Keys from Memory</button>
+      </div>
+    </div>
+  </div>
+
+  <details class="collapse" id="import-section">
+    <summary>Import an existing key pair</summary>
+    <div class="collapse-body">
+      <div class="field">
+        <label>Private Key (base64 PKCS#8)</label>
+        <textarea id="import-priv" class="mono" placeholder="Paste the private key contents..."></textarea>
+      </div>
+      <div class="field">
+        <label>Public Key (base64 raw)</label>
+        <textarea id="import-pub" class="mono" placeholder="Paste the public key contents..."></textarea>
+      </div>
+      <button class="primary" onclick="importKeys()">Import</button>
+    </div>
+  </details>
+</section>
+
+<!-- ============================ ISSUE TAB ============================ -->
+<section id="tab-issue" class="section">
+
+  <div class="card">
+    <h2>Issue a New SCEL License</h2>
+    <p class="desc">Fill in the Approved Project details and the Designated Folder paths. The tool will produce a signed Release File, a registry entry, and a verification bundle.</p>
+
+    <div id="issue-needs-key" class="alert warning" style="display: none;">
+      <strong>No signing key loaded.</strong> Go to the <a href="#" onclick="switchTab('keys'); return false;" style="color: var(--accent); text-decoration: underline;">Keys tab</a> and generate or import a key pair first.
+    </div>
+
+    <div id="issue-form">
+      <div class="section-title">License identification</div>
+
+      <div class="field">
+        <label>License ID</label>
+        <div class="field-with-button">
+          <input id="issue-license-id" class="mono" placeholder="SCEL-2026-A3F7" value="">
+          <button class="secondary" onclick="generateLicenseId()">Generate</button>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Approval Codename</label>
+          <input id="issue-codename" class="mono" placeholder="BLUEFIN">
+        </div>
+        <div class="field">
+          <label>Date of Issuance</label>
+          <input id="issue-date" type="date">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Approved Project</label>
+        <input id="issue-project" placeholder="e.g. ACME Customer Portal">
+      </div>
+
+      <div class="section-title" style="margin-top: 24px;">Licensee</div>
+
+      <div class="field">
+        <label>Licensee Name <span class="optional">(business / legal entity)</span></label>
+        <input id="issue-licensee" placeholder="e.g. ACME GmbH">
+      </div>
+
+      <details class="collapse">
+        <summary>Optional licensee details (recommended for German entities)</summary>
+        <div class="collapse-body">
+          <div class="field-row">
+            <div class="field">
+              <label>Legal entity form <span class="optional">(GmbH, AG, e.K., ...)</span></label>
+              <input id="issue-legal-form" placeholder="e.g. GmbH">
+            </div>
+            <div class="field">
+              <label>Registration <span class="optional">(HRB / HRA number)</span></label>
+              <input id="issue-registration" placeholder="e.g. HRB 12345 Düsseldorf">
+            </div>
+          </div>
+          <div class="field">
+            <label>Registered Address <span class="optional">(street, postal code, city, country)</span></label>
+            <textarea id="issue-address" placeholder="e.g. Musterstraße 1, 40210 Düsseldorf, Germany"></textarea>
+          </div>
+          <div class="field">
+            <label>Contact Email <span class="optional">(for revocation notices)</span></label>
+            <input id="issue-email" type="email" placeholder="e.g. legal@acme.example">
+          </div>
+        </div>
+      </details>
+
+      <div class="section-title" style="margin-top: 24px;">Designated Folders</div>
+
+      <div class="field">
+        <label>Folder Paths <span class="optional">(one per line)</span></label>
+        <textarea id="issue-folders" class="mono" placeholder="/_data/modules/acme_portal&#10;/_data/themes/acme_theme&#10;/_data/integrations/acme_sso" style="min-height: 120px;"></textarea>
+      </div>
+
+      <div class="button-row" style="margin-top: 24px;">
+        <button class="primary" onclick="signLicense()">Sign Release File</button>
+        <button class="secondary" onclick="clearIssueForm()">Clear Form</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="issue-result" style="display: none;">
+    <h2>Signed Release File</h2>
+    <p class="desc">The tool has signed the Release File and self-verified the result.</p>
+
+    <ul class="status-list" id="issue-status"></ul>
+
+    <div class="section-title">Release File (deliver to licensee)</div>
+    <div class="output-block" id="release-output"></div>
+    <div class="button-row">
+      <button class="secondary small" onclick="copyText(document.getElementById('release-output').textContent)">Copy</button>
+      <button class="secondary small" id="download-release">Download .json</button>
+    </div>
+
+    <div class="section-title" style="margin-top: 24px;">Detached Signature (base64)</div>
+    <div class="output-block" id="signature-output"></div>
+    <div class="button-row">
+      <button class="secondary small" onclick="copyText(document.getElementById('signature-output').textContent)">Copy</button>
+      <button class="secondary small" id="download-signature">Download .sig</button>
+    </div>
+
+    <div class="section-title" style="margin-top: 24px;">Verification Bundle <span class="tag">single-file</span></div>
+    <p class="desc">Self-contained file with release + signature + public key. Easiest format to ship.</p>
+    <div class="output-block" id="bundle-output"></div>
+    <div class="button-row">
+      <button class="secondary small" onclick="copyText(document.getElementById('bundle-output').textContent)">Copy</button>
+      <button class="secondary small" id="download-bundle">Download .scel-bundle.json</button>
+    </div>
+
+    <div class="section-title" style="margin-top: 24px;">Registry Entry <span class="tag">append to registry.json</span></div>
+    <div class="output-block" id="registry-output"></div>
+    <div class="button-row">
+      <button class="secondary small" onclick="copyText(document.getElementById('registry-output').textContent)">Copy</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ VERIFY TAB ============================ -->
+<section id="tab-verify" class="section">
+
+  <div class="card">
+    <h2>Verify a Release File</h2>
+    <p class="desc">Paste a verification bundle, or paste the Release File, signature, and public key separately. The tool will run the full SCEL Section 7 verification.</p>
+
+    <details class="collapse" open>
+      <summary>Option A — Verify a bundle (single file)</summary>
+      <div class="collapse-body">
+        <div class="field">
+          <label>Verification Bundle JSON</label>
+          <textarea id="verify-bundle" class="mono" placeholder="Paste the .scel-bundle.json contents..." style="min-height: 140px;"></textarea>
+        </div>
+        <button class="primary" onclick="verifyBundle()">Verify Bundle</button>
+      </div>
+    </details>
+
+    <details class="collapse">
+      <summary>Option B — Verify separate files</summary>
+      <div class="collapse-body">
+        <div class="field">
+          <label>Release File JSON</label>
+          <textarea id="verify-release" class="mono" placeholder="Paste the release file..." style="min-height: 100px;"></textarea>
+        </div>
+        <div class="field">
+          <label>Signature (base64)</label>
+          <textarea id="verify-signature" class="mono" placeholder="Paste the detached signature..." style="min-height: 60px;"></textarea>
+        </div>
+        <div class="field">
+          <label>Public Key (base64)</label>
+          <textarea id="verify-pubkey" class="mono" placeholder="Paste the public key..." style="min-height: 60px;"></textarea>
+        </div>
+        <button class="primary" onclick="verifySeparate()">Verify</button>
+      </div>
+    </details>
+
+    <details class="collapse">
+      <summary>Option C — Cross-check against registry entry (optional)</summary>
+      <div class="collapse-body">
+        <div class="field">
+          <label>Registry entry JSON (just the value, not the wrapping object)</label>
+          <textarea id="verify-registry" class="mono" placeholder='{"licensee_fingerprint": "...", "folder_list_hash": "sha256:...", "status": "active"}' style="min-height: 100px;"></textarea>
+        </div>
+        <p class="desc">After running Option A or B, the registry value is matched against the Release File.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="card" id="verify-result" style="display: none;">
+    <h2>Verification Result</h2>
+    <ul class="status-list" id="verify-status"></ul>
+
+    <div class="section-title" style="margin-top: 16px;">Extracted License Data</div>
+    <div class="output-block" id="verify-extracted"></div>
+  </div>
+</section>
+
+<!-- ============================ HELP TAB ============================ -->
+<section id="tab-help" class="section">
+
+  <div class="card help-section">
+    <h2>How to use this tool</h2>
+
+    <h3>1. First-time setup</h3>
+    <p>Go to the <strong>Keys</strong> tab and click <em>Generate New Key Pair</em>. Immediately export and back up the private key — store it offline (encrypted USB, hardware token, paper backup in a safe).</p>
+    <p>Publish the public key at a stable URL under your control (e.g. <code>https://suitefish.example/scel/pubkey</code>). Once published, never change the URL.</p>
+
+    <h3>2. Issuing a license</h3>
+    <p>Open the <strong>Issue License</strong> tab. Fill in the License ID (use the generator), Approval Codename, Approved Project name, Licensee details, and the list of Designated Folders.</p>
+    <p>Click <em>Sign Release File</em>. The tool produces a Release File, a detached signature, a self-contained verification bundle, and a registry entry to append to your public <code>registry.json</code>.</p>
+    <p>Deliver the verification bundle to the licensee. Update your registry. Re-sign and republish the registry file.</p>
+
+    <h3>3. Verifying a license</h3>
+    <p>Open the <strong>Verify License</strong> tab. Paste the bundle (or the parts) plus your public key. The tool runs:</p>
+    <ul style="margin: 8px 0 12px 24px; color: var(--text-dim); font-size: 13px;">
+      <li>Required-fields presence check</li>
+      <li>Ed25519 signature verification</li>
+      <li>SHA-256 folder list hash recomputation and comparison</li>
+      <li>License ID format check</li>
+      <li>Optionally: cross-check against registry entry</li>
+    </ul>
+
+    <h3>4. Revocation</h3>
+    <p>Revocation is done by updating the entry in <code>registry.json</code> (set <code>status</code> to <code>"revoked"</code>), re-signing the registry with this tool, and republishing it. The verifier will then see the revoked status.</p>
+
+    <h3>Security guarantees</h3>
+    <p>All cryptography is done locally in your browser via the built-in <strong>WebCrypto API</strong>. No external libraries, no network requests, no servers. Your private key is held only in this tab's memory and is erased when you close it.</p>
+    <p>The signing algorithm is <strong>Ed25519</strong>. The hash algorithm is <strong>SHA-256</strong>. Both meet the requirements stated in Section 7 of SCEL v1.4.</p>
+
+    <h3>File formats</h3>
+    <p><code>release_&lt;ID&gt;.json</code> — the Release File. Canonical JSON. The content covered by the signature is the canonical serialization with sorted keys.</p>
+    <p><code>release_&lt;ID&gt;.sig</code> — the detached Ed25519 signature, base64-encoded.</p>
+    <p><code>release_&lt;ID&gt;.scel-bundle.json</code> — combined bundle with release file, signature, public key fingerprint, and format identifier.</p>
+    <p><code>suitefish_scel.pub</code> / <code>suitefish_scel.key</code> — exported public / private key files.</p>
+
+    <h3>Reference</h3>
+    <p>This tool implements the authentication mechanism described in <code>scel_signing_system.md</code> and required by Section 7 of <code>scel_1.4.md</code>.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  SCEL License Manager · runs entirely in your browser · WebCrypto Ed25519 · no network calls
+</footer>
+
+<script>
+// ====================== STATE ======================
+const state = {
+  privateKey: null,
+  publicKey: null,
+  publicKeyB64: null,
+  privateKeyB64: null,
+  publicKeyFingerprint: null,
+  privRevealed: false,
+};
+
+// ====================== UTILS ======================
+function ab2b64(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let s = '';
+  for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+  return btoa(s);
+}
+
+function b642ab(b64) {
+  const s = atob(b64.replace(/\s+/g, ''));
+  const bytes = new Uint8Array(s.length);
+  for (let i = 0; i < s.length; i++) bytes[i] = s.charCodeAt(i);
+  return bytes.buffer;
+}
+
+function hex(buffer) {
+  return Array.from(new Uint8Array(buffer))
+    .map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function sha256(text) {
+  const enc = new TextEncoder().encode(text);
+  const hash = await crypto.subtle.digest('SHA-256', enc);
+  return hex(hash);
+}
+
+async function shortFingerprint(b64) {
+  const buf = b642ab(b64);
+  const hash = await crypto.subtle.digest('SHA-256', buf);
+  return hex(hash).substring(0, 16);
+}
+
+function canonicalJSON(obj) {
+  if (obj === null || obj === undefined) return 'null';
+  if (typeof obj === 'number' || typeof obj === 'boolean') return JSON.stringify(obj);
+  if (typeof obj === 'string') return JSON.stringify(obj);
+  if (Array.isArray(obj)) return '[' + obj.map(canonicalJSON).join(',') + ']';
+  if (typeof obj === 'object') {
+    const keys = Object.keys(obj).sort();
+    return '{' + keys.map(k => JSON.stringify(k) + ':' + canonicalJSON(obj[k])).join(',') + '}';
+  }
+  return 'null';
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    flashMessage('Copied to clipboard');
+  }).catch(() => {
+    flashMessage('Copy failed', true);
+  });
+}
+
+function downloadText(text, filename) {
+  const blob = new Blob([text], {type: 'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+let flashTimeout = null;
+function flashMessage(text, isError = false) {
+  let el = document.getElementById('flash-message');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'flash-message';
+    el.style.cssText = 'position:fixed;bottom:24px;right:24px;background:var(--bg-card);border:1px solid var(--accent);padding:10px 16px;border-radius:6px;font-size:13px;z-index:1000;box-shadow:0 4px 16px rgba(0,0,0,0.4);';
+    document.body.appendChild(el);
+  }
+  el.textContent = text;
+  el.style.borderColor = isError ? 'var(--error)' : 'var(--accent)';
+  el.style.display = 'block';
+  clearTimeout(flashTimeout);
+  flashTimeout = setTimeout(() => el.style.display = 'none', 2000);
+}
+
+// ====================== TAB SWITCHING ======================
+function switchTab(name) {
+  document.querySelectorAll('nav button').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === name);
+  });
+  document.querySelectorAll('.section').forEach(s => {
+    s.classList.toggle('active', s.id === 'tab-' + name);
+  });
+  if (name === 'issue') updateIssueAvailability();
+}
+
+document.querySelectorAll('nav button').forEach(b => {
+  b.addEventListener('click', () => switchTab(b.dataset.tab));
+});
+
+// ====================== KEYS ======================
+async function generateKeys() {
+  try {
+    const kp = await crypto.subtle.generateKey(
+      { name: 'Ed25519' }, true, ['sign', 'verify']
+    );
+    state.privateKey = kp.privateKey;
+    state.publicKey = kp.publicKey;
+    const pubRaw = await crypto.subtle.exportKey('raw', kp.publicKey);
+    const privPkcs8 = await crypto.subtle.exportKey('pkcs8', kp.privateKey);
+    state.publicKeyB64 = ab2b64(pubRaw);
+    state.privateKeyB64 = ab2b64(privPkcs8);
+    state.publicKeyFingerprint = await shortFingerprint(state.publicKeyB64);
+    renderKeys();
+    flashMessage('New key pair generated — back up the private key now');
+  } catch (e) {
+    flashMessage('Key generation failed: ' + e.message, true);
+    console.error(e);
+  }
+}
+
+async function importKeys() {
+  const privB64 = document.getElementById('import-priv').value.trim();
+  const pubB64 = document.getElementById('import-pub').value.trim();
+  if (!privB64 || !pubB64) {
+    flashMessage('Both keys are required', true);
+    return;
+  }
+  try {
+    const priv = await crypto.subtle.importKey(
+      'pkcs8', b642ab(privB64),
+      { name: 'Ed25519' }, true, ['sign']
+    );
+    const pub = await crypto.subtle.importKey(
+      'raw', b642ab(pubB64),
+      { name: 'Ed25519' }, true, ['verify']
+    );
+    // Sanity check: sign+verify a test message
+    const testMsg = new TextEncoder().encode('scel-import-check');
+    const sig = await crypto.subtle.sign('Ed25519', priv, testMsg);
+    const ok = await crypto.subtle.verify('Ed25519', pub, sig, testMsg);
+    if (!ok) {
+      flashMessage('Key pair does not match — signature self-check failed', true);
+      return;
+    }
+    state.privateKey = priv;
+    state.publicKey = pub;
+    state.publicKeyB64 = pubB64;
+    state.privateKeyB64 = privB64;
+    state.publicKeyFingerprint = await shortFingerprint(pubB64);
+    document.getElementById('import-section').open = false;
+    document.getElementById('import-priv').value = '';
+    document.getElementById('import-pub').value = '';
+    renderKeys();
+    flashMessage('Key pair imported and verified');
+  } catch (e) {
+    flashMessage('Import failed: ' + e.message, true);
+    console.error(e);
+  }
+}
+
+function formatFingerprint(fp) {
+  if (!fp) return '';
+  // Group into chunks of 4 chars separated by spaces for easy visual comparison
+  return fp.match(/.{1,4}/g).join(' ');
+}
+
+function renderKeys() {
+  if (state.publicKey && state.privateKey) {
+    document.getElementById('no-key').style.display = 'none';
+    document.getElementById('key-loaded').style.display = 'block';
+    document.getElementById('fp-display').textContent = formatFingerprint(state.publicKeyFingerprint);
+    document.getElementById('pub-display').textContent = state.publicKeyB64;
+    document.getElementById('priv-display').textContent = state.privateKeyB64;
+  } else {
+    document.getElementById('no-key').style.display = 'block';
+    document.getElementById('key-loaded').style.display = 'none';
+  }
+}
+
+function toggleReveal() {
+  state.privRevealed = !state.privRevealed;
+  document.getElementById('priv-display').classList.toggle('hidden', !state.privRevealed);
+}
+
+function clearKeys() {
+  if (!confirm('This will erase the key pair from this browser tab. Make sure you have a backup of the private key.')) return;
+  state.privateKey = null;
+  state.publicKey = null;
+  state.publicKeyB64 = null;
+  state.privateKeyB64 = null;
+  state.publicKeyFingerprint = null;
+  state.privRevealed = false;
+  renderKeys();
+  flashMessage('Keys cleared from memory');
+}
+
+function updateIssueAvailability() {
+  const has = !!state.privateKey;
+  document.getElementById('issue-needs-key').style.display = has ? 'none' : 'block';
+  document.getElementById('issue-form').style.opacity = has ? '1' : '0.4';
+  document.getElementById('issue-form').style.pointerEvents = has ? 'auto' : 'none';
+}
+
+// ====================== ISSUE LICENSE ======================
+function generateLicenseId() {
+  const year = new Date().getFullYear();
+  const rand = Array.from(crypto.getRandomValues(new Uint8Array(2)))
+    .map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+  document.getElementById('issue-license-id').value = `SCEL-${year}-${rand}`;
+}
+
+function clearIssueForm() {
+  ['issue-license-id', 'issue-codename', 'issue-project', 'issue-licensee',
+   'issue-legal-form', 'issue-registration', 'issue-address', 'issue-email',
+   'issue-folders'].forEach(id => document.getElementById(id).value = '');
+  setTodayDate();
+  document.getElementById('issue-result').style.display = 'none';
+}
+
+function setTodayDate() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('issue-date').value = today;
+}
+
+async function signLicense() {
+  if (!state.privateKey) {
+    flashMessage('No signing key loaded', true);
+    return;
+  }
+
+  const licenseId = document.getElementById('issue-license-id').value.trim();
+  const codename = document.getElementById('issue-codename').value.trim();
+  const project = document.getElementById('issue-project').value.trim();
+  const licensee = document.getElementById('issue-licensee').value.trim();
+  const dateStr = document.getElementById('issue-date').value;
+  const foldersRaw = document.getElementById('issue-folders').value.trim();
+
+  const errors = [];
+  if (!licenseId) errors.push('License ID is required');
+  if (!/^SCEL-\d{4}-[A-Z0-9]{4,}$/.test(licenseId)) errors.push('License ID must match format SCEL-YYYY-XXXX');
+  if (!codename) errors.push('Approval Codename is required');
+  if (!project) errors.push('Approved Project is required');
+  if (!licensee) errors.push('Licensee Name is required');
+  if (!dateStr) errors.push('Date of Issuance is required');
+  if (!foldersRaw) errors.push('At least one Designated Folder is required');
+
+  if (errors.length > 0) {
+    flashMessage(errors[0], true);
+    return;
+  }
+
+  const folders = foldersRaw.split('\n').map(s => s.trim()).filter(Boolean);
+  if (folders.length === 0) {
+    flashMessage('At least one Designated Folder is required', true);
+    return;
+  }
+
+  // Optional licensee details
+  const legalForm = document.getElementById('issue-legal-form').value.trim();
+  const registration = document.getElementById('issue-registration').value.trim();
+  const address = document.getElementById('issue-address').value.trim();
+  const email = document.getElementById('issue-email').value.trim();
+
+  const licenseeDetails = {
+    name: licensee,
+    ...(legalForm && { legal_form: legalForm }),
+    ...(registration && { registration: registration }),
+    ...(address && { address: address }),
+    ...(email && { email: email }),
+  };
+
+  // Fingerprint of licensee details = sha256 of canonical JSON
+  const licenseeFingerprint = 'sha256:' + await sha256(canonicalJSON(licenseeDetails));
+
+  // Folder list hash = sha256 of sorted folder list joined with \n
+  const sortedFolders = [...folders].sort();
+  const folderListHash = 'sha256:' + await sha256(sortedFolders.join('\n'));
+
+  const issuedAt = new Date(dateStr + 'T12:00:00Z').toISOString();
+
+  const releaseFile = {
+    scel_version: '1.4',
+    license_id: licenseId,
+    licensee: licensee,
+    licensee_fingerprint: licenseeFingerprint,
+    licensee_details: licenseeDetails,
+    approval_codename: codename,
+    approved_project: project,
+    issued_at: issuedAt,
+    designated_folders: folders,
+    folder_list_hash: folderListHash,
+    signing_key_fingerprint: 'sha256:' + state.publicKeyFingerprint,
+  };
+
+  // Canonical serialization for signing
+  const canonical = canonicalJSON(releaseFile);
+  const dataToSign = new TextEncoder().encode(canonical);
+
+  const sigBuf = await crypto.subtle.sign('Ed25519', state.privateKey, dataToSign);
+  const sigB64 = ab2b64(sigBuf);
+
+  // Self-verify
+  const ok = await crypto.subtle.verify('Ed25519', state.publicKey, sigBuf, dataToSign);
+
+  // Recompute hash check
+  const recomputed = 'sha256:' + await sha256(sortedFolders.join('\n'));
+  const hashOk = recomputed === folderListHash;
+
+  // Bundle
+  const bundle = {
+    format: 'scel-ed25519-v1',
+    scel_version: '1.4',
+    release_file: releaseFile,
+    signature: sigB64,
+    signature_algorithm: 'Ed25519',
+    signing_input: 'canonical-json-sorted-keys',
+    public_key: state.publicKeyB64,
+    public_key_fingerprint: 'sha256:' + state.publicKeyFingerprint,
+  };
+
+  // Registry entry
+  const registryEntry = {
+    [licenseId]: {
+      licensee_fingerprint: licenseeFingerprint,
+      folder_list_hash: folderListHash,
+      approval_codename: codename,
+      issued_at: issuedAt,
+      signing_key_fingerprint: 'sha256:' + state.publicKeyFingerprint,
+      status: 'active',
+    }
+  };
+
+  // Render results
+  const statusList = document.getElementById('issue-status');
+  statusList.innerHTML = '';
+  addStatus(statusList, ok, 'Signature self-verifies against public key');
+  addStatus(statusList, hashOk, 'Folder list hash matches recomputation');
+  addStatus(statusList, true, `License ID: ${licenseId}`);
+  addStatus(statusList, true, `Designated Folders: ${folders.length}`);
+  addStatus(statusList, true, `Signing key fingerprint: ${state.publicKeyFingerprint}`);
+
+  document.getElementById('release-output').textContent = JSON.stringify(releaseFile, null, 2);
+  document.getElementById('signature-output').textContent = sigB64;
+  document.getElementById('bundle-output').textContent = JSON.stringify(bundle, null, 2);
+  document.getElementById('registry-output').textContent = JSON.stringify(registryEntry, null, 2);
+
+  document.getElementById('download-release').onclick = () =>
+    downloadText(JSON.stringify(releaseFile, null, 2), `release_${licenseId}.json`);
+  document.getElementById('download-signature').onclick = () =>
+    downloadText(sigB64, `release_${licenseId}.sig`);
+  document.getElementById('download-bundle').onclick = () =>
+    downloadText(JSON.stringify(bundle, null, 2), `release_${licenseId}.scel-bundle.json`);
+
+  document.getElementById('issue-result').style.display = 'block';
+  document.getElementById('issue-result').scrollIntoView({ behavior: 'smooth' });
+  flashMessage('Release File signed successfully');
+}
+
+function addStatus(list, pass, text) {
+  const li = document.createElement('li');
+  li.className = pass ? 'pass' : 'fail';
+  li.innerHTML = `<span class="icon">${pass ? '✓' : '✗'}</span><span>${text}</span>`;
+  list.appendChild(li);
+}
+
+// ====================== VERIFY ======================
+async function verifyBundle() {
+  const raw = document.getElementById('verify-bundle').value.trim();
+  if (!raw) { flashMessage('Paste a bundle first', true); return; }
+  let bundle;
+  try { bundle = JSON.parse(raw); } catch(e) { flashMessage('Invalid JSON', true); return; }
+
+  await runVerification({
+    releaseFile: bundle.release_file,
+    signatureB64: bundle.signature,
+    publicKeyB64: bundle.public_key,
+    expectedFormat: bundle.format,
+  });
+}
+
+async function verifySeparate() {
+  const releaseRaw = document.getElementById('verify-release').value.trim();
+  const sigRaw = document.getElementById('verify-signature').value.trim();
+  const pubRaw = document.getElementById('verify-pubkey').value.trim();
+  if (!releaseRaw || !sigRaw || !pubRaw) {
+    flashMessage('All three fields are required', true); return;
+  }
+  let releaseFile;
+  try { releaseFile = JSON.parse(releaseRaw); } catch(e) { flashMessage('Invalid release JSON', true); return; }
+  await runVerification({
+    releaseFile,
+    signatureB64: sigRaw,
+    publicKeyB64: pubRaw,
+  });
+}
+
+async function runVerification({ releaseFile, signatureB64, publicKeyB64, expectedFormat }) {
+  const statusList = document.getElementById('verify-status');
+  statusList.innerHTML = '';
+  document.getElementById('verify-result').style.display = 'block';
+
+  const required = ['scel_version', 'license_id', 'licensee', 'approval_codename',
+                    'approved_project', 'issued_at', 'designated_folders', 'folder_list_hash'];
+  const missing = required.filter(f => !(f in releaseFile));
+  addStatus(statusList, missing.length === 0,
+    missing.length === 0 ? 'All required fields present' : `Missing fields: ${missing.join(', ')}`);
+
+  if (missing.length > 0) {
+    document.getElementById('verify-extracted').textContent = JSON.stringify(releaseFile, null, 2);
+    return;
+  }
+
+  // License ID format
+  const idOk = /^SCEL-\d{4}-[A-Z0-9]{4,}$/.test(releaseFile.license_id);
+  addStatus(statusList, idOk, `License ID format: ${releaseFile.license_id}`);
+
+  // SCEL version
+  addStatus(statusList, releaseFile.scel_version === '1.4',
+    `SCEL version: ${releaseFile.scel_version}`);
+
+  // Recompute folder list hash
+  const sorted = [...releaseFile.designated_folders].sort();
+  const recomputed = 'sha256:' + await sha256(sorted.join('\n'));
+  const hashOk = recomputed === releaseFile.folder_list_hash;
+  addStatus(statusList, hashOk,
+    hashOk ? 'Folder list hash matches' : `Folder list hash MISMATCH (expected ${releaseFile.folder_list_hash}, computed ${recomputed})`);
+
+  // Signature verification
+  let sigOk = false;
+  let sigError = null;
+  try {
+    const pubKey = await crypto.subtle.importKey(
+      'raw', b642ab(publicKeyB64),
+      { name: 'Ed25519' }, true, ['verify']
+    );
+    const canonical = canonicalJSON(releaseFile);
+    const data = new TextEncoder().encode(canonical);
+    const sigBuf = b642ab(signatureB64);
+    sigOk = await crypto.subtle.verify('Ed25519', pubKey, sigBuf, data);
+  } catch (e) {
+    sigError = e.message;
+  }
+  addStatus(statusList, sigOk,
+    sigOk ? 'Ed25519 signature verifies' : `Signature INVALID${sigError ? ': ' + sigError : ''}`);
+
+  // Public key fingerprint
+  const fp = await shortFingerprint(publicKeyB64);
+  addStatus(statusList, true, `Public key fingerprint: ${fp}`);
+
+  // Optional registry check
+  const regRaw = document.getElementById('verify-registry').value.trim();
+  if (regRaw) {
+    try {
+      const reg = JSON.parse(regRaw);
+      const folderOk = reg.folder_list_hash === releaseFile.folder_list_hash;
+      addStatus(statusList, folderOk,
+        folderOk ? 'Registry folder hash matches' : 'Registry folder hash MISMATCH');
+      const statusActive = reg.status === 'active';
+      addStatus(statusList, statusActive, `Registry status: ${reg.status || 'missing'}`);
+    } catch (e) {
+      addStatus(statusList, false, 'Registry entry JSON invalid');
+    }
+  }
+
+  // Format check (for bundles)
+  if (expectedFormat) {
+    addStatus(statusList, expectedFormat === 'scel-ed25519-v1',
+      `Bundle format: ${expectedFormat}`);
+  }
+
+  document.getElementById('verify-extracted').textContent = JSON.stringify(releaseFile, null, 2);
+}
+
+// ====================== BOOT ======================
+window.addEventListener('DOMContentLoaded', () => {
+  // Check for Ed25519 support
+  crypto.subtle.generateKey({ name: 'Ed25519' }, true, ['sign', 'verify'])
+    .catch(e => {
+      const banner = document.createElement('div');
+      banner.className = 'alert error';
+      banner.style.cssText = 'position:sticky;top:0;z-index:100;border-radius:0;margin:0;';
+      banner.innerHTML = '<strong>Browser does not support Ed25519.</strong> Use Chrome/Edge 113+, Safari 17+, or Firefox 130+.';
+      document.body.insertBefore(banner, document.body.firstChild);
+    });
+
+  setTodayDate();
+  generateLicenseId();
+  renderKeys();
+  updateIssueAvailability();
+});
+</script>
+
+</body>
+</html>

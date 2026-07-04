@@ -1,0 +1,210 @@
+Suitefish Commercial Exception License (SCEL) – v1.4
+Copyright © Jan-Maurice "Bugfish" Dahlmanns 2026
+
+The Suitefish CMS is licensed under the GNU General Public License v3.0 (GPLv3).
+Under GPLv3, any derivative work — including modules, plugins, and integrations built
+on top of the CMS — would by default also be required to be released under GPLv3.
+This document grants a limited commercial exception to that copyleft obligation,
+subject to the terms below.
+
+**Definitions**
+
+- **"Copyright Holder"** — Jan-Maurice "Bugfish" Dahlmanns, the holder of copyright
+  in the Suitefish CMS, and any legal successor or assign.
+- **"Licensee"** — the natural or legal person identified as the Licensee in the
+  header of this document, to whom this exception is issued.
+- **"Suitefish CMS Core"** — the complete Suitefish CMS software as distributed by
+  the Copyright Holder, including all source code, folders, and components, with the
+  exception of Licensee Additions placed within the Designated Folders.
+- **"Release File"** — the official document issued by the Copyright Holder alongside
+  this license, which explicitly enumerates the specific folder paths designated for
+  this Licensee under the License ID stated above, and which carries the
+  authentication described in Section 7.
+- **"Designated Folders"** — the specific folder paths enumerated in the Release File
+  associated with this License ID. These are the paths within the CMS installation
+  where the Licensee is authorized to place their own modules, plugins, and additions.
+  Designated Folders are determined solely by the Release File and differ between
+  licensees.
+- **"Licensee Additions"** — any modules, plugins, components, or code created
+  independently by the Licensee and placed within the Designated Folders.
+- **"Approved Project"** — the specific commercial project identified by the project
+  name and Approval Codename stated in this document.
+- **"Approval Codename"** — the unique internal identifier assigned by the Copyright
+  Holder to the Approved Project, as stated in this document.
+- **"End User"** — any third party to whom the Licensee distributes, delivers, sells,
+  or otherwise conveys the Approved Project or any product based on it.
+
+**Exception Grant**
+
+The Licensee is granted a limited, non-exclusive, non-transferable permission to
+integrate the Suitefish CMS Core into the Approved Project and to use and distribute
+that project commercially. The core benefit of this exception is that Licensee
+Additions placed within the Designated Folders are not required to be released under
+GPLv3, notwithstanding the copyleft provisions of GPLv3 that would otherwise apply.
+
+This exception takes effect upon issuance of a valid Release File by the Copyright
+Holder for the License ID stated in this document. By installing, integrating,
+distributing, or otherwise relying on the Suitefish CMS Core under this exception,
+the Licensee accepts and agrees to be bound by the following terms:
+
+1. **Scope**
+   This exception applies solely to the Approved Project identified by the Approval
+   Codename stated in this document. The exemption from GPLv3 copyleft covers only
+   Licensee Additions within the Designated Folders and does not extend to any other
+   works, products, projects, or folder paths not listed in the Release File.
+
+2. **No Relicensing or Resale of GPL Code**
+   The Suitefish CMS Core may not be sublicensed, sold, leased, reverse-engineered,
+   decompiled, or distributed as proprietary software, nor used under any license
+   other than GPLv3 outside the scope of the Approved Project.
+
+3. **Retention of GPL for the Core**
+   The Suitefish CMS Core remains licensed under GPLv3 in its entirety. This exception
+   does not alter the license of the CMS Core in any way. All rights not expressly
+   granted herein are reserved by the Copyright Holder.
+
+4. **Ownership of Licensee Additions**
+   The Licensee retains full ownership of all Licensee Additions. The Copyright
+   Holder makes no claim on code independently created by the Licensee. This exception
+   explicitly exempts Licensee Additions from the GPLv3 copyleft obligation, allowing
+   the Licensee to keep their modules and plugins proprietary. This exemption applies
+   solely to the Licensee's own original code and does not affect the GPLv3 status of
+   the Suitefish CMS Core.
+
+5. **No Independent Use or Patenting**
+   The Suitefish CMS Core may not be patented or used independently of the Approved
+   Project under this exception.
+
+6. **License Identification**
+   This exception is bound to the unique License ID stated in this document and is
+   valid only for the Licensee and Approved Project named herein. Invoking the rights
+   of this exception without a valid, matching License ID issued by the Copyright
+   Holder for the specific Licensee and project is unauthorized and void.
+
+7. **Release File Authentication**
+   To ensure the integrity of this exception and prevent forgery, each Release File
+   issued under SCEL is authenticated by an asymmetric cryptographic signature
+   mechanism. The operational details of this mechanism — including the specific
+   signing algorithm, key publication, registry format, and verification procedure —
+   are documented in the canonical reference document `scel_signing_system.md`,
+   which is incorporated into this exception by reference.
+
+   (a) **Digital Signature.** Every Release File is digitally signed by the Copyright
+   Holder using an asymmetric cryptographic key (Ed25519 or equivalent). The
+   corresponding public verification key is published by the Copyright Holder at a
+   stable, publicly accessible URL under the Copyright Holder's official distribution
+   channel, and may be used by any party to verify a Release File's authenticity.
+
+   (b) **Required Contents.** Each Release File contains, at minimum: the License ID,
+   a Licensee identifier, the Approval Codename, the complete enumerated list of
+   Designated Folder paths, and a SHA-256 hash computed over the canonical folder
+   list.
+
+   (c) **Public Verification Registry.** The Copyright Holder maintains a public,
+   cryptographically signed verification registry mapping each issued License ID to
+   its canonical SHA-256 hash, its issuance metadata, and its current status (active,
+   suspended, or revoked). Verification of a Release File requires (i) successful
+   signature verification against the published public key, (ii) matching of the
+   included SHA-256 hash to the value listed in the registry for the stated License
+   ID, and (iii) a registry status of "active" for that License ID.
+
+   (d) **Invalid Release Files.** A Release File that fails signature verification,
+   whose hash does not match the registry value, whose License ID is not present in
+   the registry, or whose registry status is not "active", is invalid and confers no
+   rights under this exception. Any use of the Suitefish CMS Core relying on such a
+   Release File is unauthorized.
+
+   (e) **Burden of Authenticity.** Any party invoking the rights of this exception
+   bears the burden of producing a Release File that satisfies all verification
+   requirements in this Section. The absence of a verifiable Release File is
+   conclusive evidence that no SCEL exception applies.
+
+8. **Ownership of the CMS Installation**
+   All folders, files, and components of the Suitefish CMS installation are and remain
+   the exclusive property of the Copyright Holder and are distributed solely by
+   Suitefish. The sole exception is Licensee Additions placed within the Designated
+   Folders, which belong to the Licensee. No folder, file, or component of the CMS
+   installation other than Licensee Additions may be relicensed, sublicensed, claimed,
+   or distributed under any terms other than those set by the Copyright Holder,
+   regardless of any other agreement.
+
+9. **Required Folder Structure Integrity**
+   A valid and enforceable SCEL exception requires that the Designated Folders — as
+   defined in the Release File associated with this License ID — exist at their
+   designated paths within the licensed installation. Any renaming, removal, or
+   structural relocation of the Designated Folder paths results in the immediate
+   termination of this exception with effect from the time of such alteration,
+   reverting the Licensee's rights to those granted under standard GPLv3. The
+   Licensee is responsible for maintaining the integrity of the Designated
+   Folder paths at all times. The content within the Designated Folders is under the
+   full control of the Licensee and is not subject to this restriction.
+
+10. **Downstream Distribution to End Users**
+    When the Licensee distributes the Approved Project to End Users, the following
+    applies:
+
+    (a) End Users receive the Suitefish CMS Core under standard GPLv3 terms — the
+    same rights any GPLv3 recipient would have, including the right to use, modify,
+    and redistribute the Core under GPLv3.
+
+    (b) This SCEL exception is not transferable and does not extend to End Users. End
+    Users do not become licensees under SCEL and cannot invoke any rights granted by
+    this exception. Any commercial integration by an End User into a separate product
+    requires a separate SCEL license issued by the Copyright Holder.
+
+    (c) The Licensee retains full ownership of Licensee Additions and may distribute
+    them to End Users under any terms the Licensee chooses, in accordance with
+    Section 4.
+
+11. **Term, Termination, and Revocation for Misuse**
+
+    (a) **Term.** This exception is granted for unlimited duration, subject to
+    continued compliance with these terms.
+
+    (b) **Automatic Termination on Violation.** Any violation of these terms —
+    including but not limited to use, distribution, or modification of the Suitefish
+    CMS Core outside the scope of the Approved Project and its Approval Codename —
+    results in immediate and automatic termination of this exception.
+
+    (c) **Revocation for Misuse.** The Copyright Holder reserves the right to revoke
+    this exception with immediate effect upon reasonable determination that the
+    Licensee has engaged in misuse of the Suitefish CMS Core. Misuse includes,
+    without limitation: reselling, redistributing, sublicensing, or commercializing
+    the Suitefish CMS Core or its core functionalities as proprietary software;
+    circumventing the GPLv3 obligations applicable to the Core; misrepresenting
+    Suitefish CMS Core code as Licensee Additions; or any conduct intended to extract
+    commercial value from the Core beyond the scope of the Approved Project. The
+    determination of misuse is made by the Copyright Holder based on observed
+    circumstances and in good faith. Revocation will be communicated in writing
+    (electronic notice sufficient) to the Licensee.
+
+    (d) **Effect of Termination or Revocation.** Upon termination or revocation, all
+    rights granted under this exception cease, and the Licensee's rights to the
+    Suitefish CMS Core revert automatically to those granted solely under standard
+    GPLv3. Ownership of Licensee Additions by the Licensee is not affected by
+    termination or revocation.
+
+12. **Disclaimer of Warranty**
+    THE SUITEFISH CMS CORE AND ALL ASSOCIATED MATERIALS ARE PROVIDED "AS IS" WITHOUT
+    WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY IMPLIED
+    WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR
+    NON-INFRINGEMENT. THE COPYRIGHT HOLDER SHALL NOT BE LIABLE FOR ANY DIRECT,
+    INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES ARISING IN ANY
+    WAY OUT OF THE USE OF OR INABILITY TO USE THE SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGES.
+
+13. **Governing Law and Jurisdiction**
+    This exception and any disputes arising out of or in connection with it shall be
+    governed by the laws of the Federal Republic of Germany, excluding the United
+    Nations Convention on Contracts for the International Sale of Goods (CISG). The
+    exclusive place of jurisdiction for all disputes arising from or in connection
+    with this exception shall be the competent court at the registered seat of the
+    Copyright Holder in North Rhine-Westphalia (Nordrhein-Westfalen), Germany, to the
+    extent permitted by applicable law.
+
+14. **Severability**
+    If any provision of this exception is held to be invalid or unenforceable by a
+    court of competent jurisdiction, the remaining provisions shall remain in full
+    force and effect. The invalid or unenforceable provision shall be replaced by a
+    valid and enforceable provision that most closely reflects the original intent of
+    the parties.

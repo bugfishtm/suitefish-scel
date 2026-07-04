@@ -1,0 +1,11 @@
+The public key used to sign all Suitefish Commercial Exception License (SCEL) Release Files:
+
+Fingerprint (SHA-256): sha256:d3a1a4572fece8d0
+Algorithm: Ed25519
+First published: 28.05.2026
+Public-Key: lsLYH0kQMFvYAOKG1c/AUE72QnvHMgfNam3DGcjSm2c=
+
+Important: This post is a reminder of what the key looks like, nothing more. Any webpage — including this one — can be compromised or tampered with. The authoritative public key is always the one published at: https://suitefish.com. This means, if the website https://suitefish.com is still under control of Jan-Maurice "Bugfish" Dahlmanns. If a key you encounter on a mirror, social post, or third-party site does not match the one at suitefish.com, do not trust it. Always verify the SHA-256 fingerprint against the canonical source before relying on it.
+
+
+
