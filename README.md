@@ -1,4 +1,9 @@
-# SCEL Signing System — Operational Guide
+# Suitefish-SCEL License Validator/Signer
+
+> [!Warning]
+> This repository is intended to publish the suitefish documentation, not for issue reporting. Please submit issues at https://github.com/bugfishtm/suitefish-cms/issues.
+
+## 🔍 What is this repository about?
 
 This document describes the cryptographic system used to authenticate
 **Release Files** issued under the Suitefish Commercial Exception License (SCEL).
@@ -468,3 +473,17 @@ simultaneous compromise of the private key **and** the hosting infrastructure
 **and** the absence of any independent timestamping of the original public
 key publication. That scenario is implausible in practice and would
 constitute extraordinary circumstances in any legal proceeding.
+
+## ❓ Support Channels
+
+If you encounter any issues or have questions while using this software, feel free to contact us:
+
+- **GitHub Issues** is the main platform for reporting bugs, asking questions, or submitting feature requests: [https://github.com/bugfishtm/suitefish-cms/issues](https://github.com/bugfishtm/suitefish-cms/issues)
+- **Discord Community** is available for live discussions, support, and connecting with other users: [Join us on Discord](https://discord.com/invite/xCj7AEMmye)  
+- **Email support** is recommended only for urgent security-related issues: [security@bugfish.eu](mailto:security@bugfish.eu)
+
+## 📜 License Information
+
+The license for this software can be found in the [LICENSE.md](LICENSE.md) file. 
+
+🐟 Bugfish 
